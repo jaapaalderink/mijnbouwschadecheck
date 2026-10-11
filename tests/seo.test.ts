@@ -33,10 +33,10 @@ test("local development and administration stay out of search results", () => {
     /rel="canonical"/,
   );
   assert.match(
-    seoHtml(template, "/beheer", origin),
+    seoHtml(template, "/admin_sander", origin),
     /content="noindex, nofollow"/,
   );
-  assert.doesNotMatch(sitemap(origin), /beheer|localhost/);
+  assert.doesNotMatch(sitemap(origin), /admin_sander|localhost/);
   assert.equal((sitemap(origin).match(/<loc>/g) ?? []).length, 3);
   assert.doesNotMatch(sitemap("http://localhost:3001"), /<loc>/);
 });

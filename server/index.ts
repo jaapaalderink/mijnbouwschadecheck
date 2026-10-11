@@ -242,7 +242,7 @@ app.post(
         await sendMail(
           r.rows[0].email,
           "Wachtwoord herstellen",
-          `Herstel je wachtwoord via ${process.env.SITE_URL}/beheer#reset=${token}. Deze link is 30 minuten geldig.`,
+          `Herstel je wachtwoord via ${process.env.SITE_URL}/admin_sander#reset=${token}. Deze link is 30 minuten geldig.`,
         );
       } catch {
         await db.query("delete from password_resets where token_hash=$1", [
@@ -556,7 +556,7 @@ async function outboxTick() {
         await sendMail(
           process.env.NOTIFICATION_EMAIL!,
           `Nieuwe aanvraag #${r.rows[0].number}`,
-          `Aanvraag #${r.rows[0].number} is ontvangen. Bekijk deze in de beveiligde beheeromgeving: ${process.env.SITE_URL}/beheer`,
+          `Aanvraag #${r.rows[0].number} is ontvangen. Bekijk deze in de beveiligde beheeromgeving: ${process.env.SITE_URL}/admin_sander`,
         );
       }, item.attempts);
       await db.query(
@@ -582,7 +582,7 @@ app.get("/robots.txt", (_req, res) => {
     .type("text/plain")
     .send(
       origin
-        ? `User-agent: *\nAllow: /\nDisallow: /beheer\nDisallow: /api/\nSitemap: ${origin}/sitemap.xml\n`
+        ? `User-agent: *\nAllow: /\nDisallow: /admin_sander\nDisallow: /api/\nSitemap: ${origin}/sitemap.xml\n`
         : "User-agent: *\nDisallow: /\n",
     );
 });
@@ -603,7 +603,7 @@ app.get(
         .send(
           '<!doctype html><html lang="nl"><head><meta name="robots" content="noindex"><title>Pagina niet gevonden</title></head><body><h1>Pagina niet gevonden</h1><a href="/">Terug naar de mijnbouwschadecheck</a></body></html>',
         );
-    if (req.path === "/beheer")
+    if (req.path === "/admin_sander")
       res
         .set("X-Robots-Tag", "noindex, nofollow")
         .set("Cache-Control", "no-store");

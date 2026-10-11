@@ -15,7 +15,7 @@ export const pages: Record<string, { title: string; description: string }> = {
     description:
       "Lees hoe Mijnbouwschadecheck je persoonsgegevens gebruikt voor de controle en opvolging van je aanvraag.",
   },
-  "/beheer": {
+  "/admin_sander": {
     title: "Beheer | Mijnbouwschadecheck",
     description: "Beveiligde beheeromgeving van Mijnbouwschadecheck.",
   },

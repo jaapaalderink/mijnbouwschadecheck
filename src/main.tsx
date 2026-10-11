@@ -86,7 +86,7 @@ function App() {
     const publicSite = robots?.getAttribute("data-public") === "true";
     robots?.setAttribute(
       "content",
-      publicSite && page && path !== "/beheer"
+      publicSite && page && path !== "/admin_sander"
         ? "index, follow"
         : "noindex, nofollow",
     );
@@ -128,13 +128,10 @@ function App() {
           <a href="/contact" onClick={navigate}>
             Contact
           </a>
-          <a className="nav-button" href="/beheer" onClick={navigate}>
-            Beheer ↗
-          </a>
         </nav>
       </header>
       <main id="main">
-        {path === "/beheer" ? (
+        {path === "/admin_sander" ? (
           <Admin config={config} />
         ) : path === "/privacy" ? (
           <Privacy config={config} />

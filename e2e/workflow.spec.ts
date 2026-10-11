@@ -5,6 +5,8 @@ test("publieke flow: validatie, conditionele schade, teruggaan, opslag en result
   page,
 }) => {
   await page.goto("/");
+  await expect(page.locator('header a[href="/admin_sander"]')).toHaveCount(0);
+  await expect(page.getByRole("link", { name: /Beheer/ })).toHaveCount(0);
   await expect(
     page.getByRole("heading", {
       name: "Mijnbouwschade in Groningen? Begin met duidelijkheid.",
@@ -102,7 +104,7 @@ test("beheer is afgeschermd en controle blijft apart van status", async ({
   expect(fixture.status()).toBe(201);
   const unauthorized = await request.get("/api/admin/applications");
   expect(unauthorized.status()).toBe(401);
-  await page.goto("/beheer");
+  await page.goto("/admin_sander");
   await page
     .getByLabel("E-mailadres", { exact: true })
     .fill(process.env.E2E_ADMIN_EMAIL ?? "admin@example.invalid");

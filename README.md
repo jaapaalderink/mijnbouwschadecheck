@@ -60,6 +60,8 @@ Productiestart vereist een database, HTTPS-site-URL en SMTP/notificatieconfigura
 
 ## Authenticatie en persoonlijke controle
 
+De beheeromgeving is bereikbaar via `/admin_sander`, lokaal bijvoorbeeld `http://localhost:3001/admin_sander`. Er staat geen beheerlink in de publieke navigatie. De oude route `/beheer` geeft 404. Inloggen blijft verplicht; de aangepaste URL vervangt geen toegangsbeveiliging. Herstel- en notificatiemails verwijzen naar de nieuwe beheerroute.
+
 Wachtwoorden zijn gesalt met scrypt. Sessies zijn willekeurige 256-bit tokens; alleen hashes staan in PostgreSQL. HttpOnly/SameSite=Strict-cookies, Secure in productie, sessies maximaal 8 uur. Herstel gebruikt eenmalige gehashte tokens van 30 minuten, verstuurd via SMTP; tokens staan in de URL-fragmentidentifier en worden meteen uit de browseradresbalk verwijderd. Herstel trekt alle bestaande sessies in.
 
 Optionele MFA: genereer een veilig base32-secret buiten de repository, configureer het in je authenticator als TOTP met SHA-1, 6 cijfers en 30 seconden en injecteer datzelfde secret tijdelijk als `ADMIN_TOTP_SECRET` tijdens `admin:create`. MFA wordt serverzijdig bij login en wachtwoordherstel afgedwongen zodra een secret is ingesteld. Bewaar een veilige herstelkopie buiten de applicatie. Er is geen publieke MFA-registratie of recovery-code-UI. Een beheerder zonder MFA heeft alleen een wachtwoord; gebruik MFA voor productie.

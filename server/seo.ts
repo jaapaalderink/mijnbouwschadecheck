@@ -39,7 +39,7 @@ export function seoHtml(
 ) {
   const page = pages[path];
   const origin = publicOrigin(siteUrl);
-  const indexable = !!origin && !!page && path !== "/beheer";
+  const indexable = !!origin && !!page && path !== "/admin_sander";
   const title = page?.title ?? "Pagina niet gevonden | Mijnbouwschadecheck";
   const description = page?.description ?? "Deze pagina bestaat niet.";
   const url = origin && page ? origin + path : null;
