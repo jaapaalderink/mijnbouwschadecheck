@@ -13,6 +13,7 @@ import {
   type Question,
 } from "./domain";
 import "./style.css";
+import { pages } from "./seo";
 type Config = {
   configured: boolean;
   company: string;
@@ -59,6 +60,37 @@ async function request(
 function App() {
   const [config, setConfig] = useState(defaultConfig);
   const [path, setPath] = useState(location.pathname);
+  useEffect(() => {
+    const page = pages[path];
+    document.title =
+      page?.title ?? "Pagina niet gevonden | Mijnbouwschadecheck";
+    document
+      .querySelector('meta[name="description"]')
+      ?.setAttribute("content", page?.description ?? "");
+    document
+      .querySelector('meta[property="og:title"]')
+      ?.setAttribute("content", document.title);
+    document
+      .querySelector('meta[property="og:description"]')
+      ?.setAttribute("content", page?.description ?? "");
+    const canonical = document.querySelector<HTMLLinkElement>(
+      'link[rel="canonical"]',
+    );
+    if (canonical) {
+      canonical.href = new URL(path, canonical.href).href;
+      document
+        .querySelector('meta[property="og:url"]')
+        ?.setAttribute("content", canonical.href);
+    }
+    const robots = document.querySelector('meta[name="robots"]');
+    const publicSite = robots?.getAttribute("data-public") === "true";
+    robots?.setAttribute(
+      "content",
+      publicSite && page && path !== "/beheer"
+        ? "index, follow"
+        : "noindex, nofollow",
+    );
+  }, [path]);
   useEffect(() => {
     request("/config")
       .then(setConfig)
@@ -168,7 +200,7 @@ function Home({ config }: { config: Config }) {
             <span className="dot" /> GRONINGEN
           </span>
           <h1>
-            Schade aan je woning?
+            Mijnbouwschade in Groningen?
             <br />
             <em>Begin met duidelijkheid.</em>
           </h1>

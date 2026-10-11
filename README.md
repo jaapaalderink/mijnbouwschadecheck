@@ -44,6 +44,12 @@ Voor lokale testmail: `SMTP_HOST=127.0.0.1`, `SMTP_PORT=1025`, `SMTP_REQUIRE_TLS
 
 ## Zelf hosten
 
+### Zoekmachines
+
+Voor de openbare website is de officiële origin `https://www.mijnbouwschadecheck.nl`. Stel bij livegang `SITE_URL=https://www.mijnbouwschadecheck.nl` in. Houd voor lokaal testen `SITE_URL=http://localhost:3001`; lokale HTTP-versies worden niet geïndexeerd. De Node-server levert per pagina titels, beschrijvingen, canonical-URL's en Open Graph-metadata, plus WebSite-structured data op de homepage. `/sitemap.xml` gebruikt de ingestelde openbare HTTPS-origin. De beheeromgeving heeft noindex en onbekende pagina's geven HTTP 404. Robots-instructies vervangen geen toegangsbeveiliging.
+
+Host de website via de Node-server (`npm start`), zodat deze metadata en endpoints beschikbaar zijn. Richt redirects van HTTP en eventuele andere domeinvarianten naar de officiële HTTPS/www-origin in bij de reverse proxy. Meld na livegang de sitemap aan in Google Search Console en controleer de gerenderde pagina met URL-inspectie: de pagina-inhoud wordt door React geladen en vereist JavaScript. De build en lokale tests bewijzen geen indexering of zoekpositie.
+
 De applicatie is één Node-proces dat de productiebuild en API serveert. `Dockerfile` maakt een runtime-image met Node 24; gebruik `docker build -t mijnbouwschadecheck .`. Voer migraties met dezelfde image en configuratie uit (`npm run db:migrate`) vóór de applicatiestart. Maak de beheerder apart aan met tijdelijk geïnjecteerde secrets. Je kunt ook zonder Docker `npm ci`, `npm run build` en `npm start` gebruiken.
 
 Plaats een reverse proxy zoals Caddy of nginx vóór de applicatie met HTTPS. Stel `SITE_URL` in op je werkelijke HTTPS-origin en `NODE_ENV=production`. Publiceer alleen de proxy, houd PostgreSQL op een privénetwerk en gebruik sterke afzonderlijke databasecredentials. De browser bevat geen databasewachtwoord of serverkey en kent geen directe databaseverbinding. Alle beheermutaties gaan via geauthenticeerde server-endpoints. PostgreSQL tabellen en functies geven geen toegang aan de `PUBLIC`-rol. Gebruik een afzonderlijke databaserol voor de applicatie en geef alleen deze rol toegang tot de benodigde tabellen, sequences en functies na migratie door de eigenaar. Geef die rol geen superuser-, rolbeheer- of database-aanmaakrechten. De initiële lokale Docker-rol is uitsluitend bedoeld voor ontwikkeling.

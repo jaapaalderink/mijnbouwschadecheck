@@ -5,6 +5,9 @@ import cookieParser from "cookie-parser";
 import { rateLimit } from "express-rate-limit";
 import { randomBytes } from "node:crypto";
 import { resolve } from "node:path";
+import { readFile } from "node:fs/promises";
+import { pages } from "../src/seo.ts";
+import { publicOrigin, seoHtml, sitemap } from "./seo.ts";
 import { z } from "zod";
 import {
   initial,
@@ -38,12 +41,19 @@ if (production) {
 }
 if (process.env.TRUST_PROXY === "1") app.set("trust proxy", 1);
 app.disable("x-powered-by");
+app.use((_req, res, next) => {
+  res.locals.cspNonce = randomBytes(16).toString("base64");
+  next();
+});
 app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
         "connect-src": ["'self'"],
-        "script-src": ["'self'"],
+        "script-src": [
+          "'self'",
+          (_req, res: any) => `'nonce-${res.locals.cspNonce}'`,
+        ],
         "style-src": ["'self'"],
         "img-src": ["'self'", "data:"],
       },
@@ -566,8 +576,43 @@ async function outboxTick() {
 setInterval(() => {
   outboxTick().catch(() => console.error("notification_worker_failed"));
 }, 30000).unref();
-app.use(express.static(resolve("dist")));
-app.get("/{*path}", (_req, res) => res.sendFile(resolve("dist/index.html")));
+app.get("/robots.txt", (_req, res) => {
+  const origin = publicOrigin(process.env.SITE_URL);
+  res
+    .type("text/plain")
+    .send(
+      origin
+        ? `User-agent: *\nAllow: /\nDisallow: /beheer\nDisallow: /api/\nSitemap: ${origin}/sitemap.xml\n`
+        : "User-agent: *\nDisallow: /\n",
+    );
+});
+app.get("/sitemap.xml", (_req, res) =>
+  res.type("application/xml").send(sitemap(process.env.SITE_URL)),
+);
+app.use("/api", (_req, res) =>
+  res.status(404).json({ error: "Endpoint niet gevonden." }),
+);
+app.use(express.static(resolve("dist"), { index: false }));
+app.get(
+  "/{*path}",
+  route(async (req: any, res: any) => {
+    if (!pages[req.path])
+      return res
+        .status(404)
+        .type("text/html")
+        .send(
+          '<!doctype html><html lang="nl"><head><meta name="robots" content="noindex"><title>Pagina niet gevonden</title></head><body><h1>Pagina niet gevonden</h1><a href="/">Terug naar de mijnbouwschadecheck</a></body></html>',
+        );
+    if (req.path === "/beheer")
+      res
+        .set("X-Robots-Tag", "noindex, nofollow")
+        .set("Cache-Control", "no-store");
+    const html = await readFile(resolve("dist/index.html"), "utf8");
+    res
+      .type("text/html")
+      .send(seoHtml(html, req.path, process.env.SITE_URL, res.locals.cspNonce));
+  }),
+);
 app.use((error: any, _req: any, res: any, _next: any) => {
   if (error instanceof ValidationError)
     return res.status(400).json({ error: error.message, fields: error.fields });

@@ -7,7 +7,7 @@ test("publieke flow: validatie, conditionele schade, teruggaan, opslag en result
   await page.goto("/");
   await expect(
     page.getByRole("heading", {
-      name: "Schade aan je woning? Begin met duidelijkheid.",
+      name: "Mijnbouwschade in Groningen? Begin met duidelijkheid.",
     }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Volgende stap" }).click();
@@ -183,6 +183,9 @@ test("API blokkeert vervalsing en cross-site mutaties", async ({ request }) => {
 });
 test("toetsenbord en privacy", async ({ page }) => {
   await page.goto("/");
+  await expect(
+    page.getByRole("link", { name: "Direct naar inhoud" }),
+  ).toBeAttached();
   await page.keyboard.press("Tab");
   await expect(
     page.getByRole("link", { name: "Direct naar inhoud" }),
