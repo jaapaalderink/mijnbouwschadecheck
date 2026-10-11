@@ -141,7 +141,7 @@ function App() {
         <div>
           <strong>{config.company}</strong>
           <p>
-            Voor Groningen en Noord-Drenthe.
+            Voor Groningen.
             <br />
             Onafhankelijk. Persoonlijk. Duidelijk.
           </p>
@@ -165,7 +165,7 @@ function Home({ config }: { config: Config }) {
       <section className="hero">
         <div className="hero-copy">
           <span className="eyebrow">
-            <span className="dot" /> GRONINGEN & NOORD-DRENTHE
+            <span className="dot" /> GRONINGEN
           </span>
           <h1>
             Schade aan je woning?
@@ -175,7 +175,7 @@ function Home({ config }: { config: Config }) {
           <p className="lead">
             Scheuren in de muur kunnen vragen oproepen. Met onze gratis check
             zet je de eerste stap naar persoonlijk advies over fysieke
-            mijnbouwschade.
+            mijnbouwschade in Groningen.
           </p>
           <div className="promises">
             <span>✓ Gratis en vrijblijvend</span>
@@ -244,7 +244,7 @@ function Home({ config }: { config: Config }) {
           </article>
           <article>
             <span className="number">03</span>
-            <h3>Jaap kijkt persoonlijk mee</h3>
+            <h3>We nemen contact met je op</h3>
             <p>
               Iedere aanvraag wordt persoonlijk gecontroleerd voordat we contact
               opnemen. Vervolgkosten bespreken we vooraf.

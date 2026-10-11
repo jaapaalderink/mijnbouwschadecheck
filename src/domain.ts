@@ -381,7 +381,7 @@ export function prepareSubmission(q: Questionnaire, input: unknown) {
 }
 export const resultText = {
   possible:
-    "Je antwoorden bevatten aanwijzingen dat een vergoeding mogelijk is. We controleren je aanvraag persoonlijk voordat we contact met je opnemen.",
+    "Je antwoorden bevatten aanwijzingen dat een vergoeding mogelijk is. We controleren je aanvraag en nemen nog contact met je op.",
   review_needed:
-    "Op basis van deze korte check kunnen we niet aangeven of een vergoeding mogelijk is. We controleren je aanvraag persoonlijk voordat we contact met je opnemen.",
+    "Op basis van deze korte check kunnen we niet aangeven of een vergoeding mogelijk is. We controleren je aanvraag en nemen nog contact met je op.",
 };
