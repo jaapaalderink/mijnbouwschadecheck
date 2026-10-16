@@ -276,7 +276,7 @@ function Home({ config }: { config: Config }) {
             <h3>We nemen contact met je op</h3>
             <p>
               Iedere aanvraag wordt persoonlijk gecontroleerd voordat we contact
-              opnemen. Vervolgkosten bespreken we vooraf.
+              opnemen.
             </p>
           </article>
         </div>
