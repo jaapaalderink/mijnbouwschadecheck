@@ -259,7 +259,7 @@ function Home({ config }: { config: Config }) {
             <span className="number">01</span>
             <h3>Vertel over je woning</h3>
             <p>
-              Beantwoord een paar vragen over je woning en eventuele zichtbare
+              Beantwoord enkele vragen over je woning en eventuele zichtbare
               schade.
             </p>
           </article>
