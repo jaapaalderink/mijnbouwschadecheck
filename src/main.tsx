@@ -246,7 +246,7 @@ function Home({ config }: { config: Config }) {
               <circle cx="60" cy="184" r="19" fill="#c9d4bf" />
               <path d="M60 194V218" stroke="#788e7b" strokeWidth="3" />
             </svg>
-            <span>Een eerste stap. Geen officiële beoordeling.</span>
+            <span>Een eerste stap naar persoonlijk advies</span>
           </div>
         </div>
         <QuestionnaireForm config={config} />
