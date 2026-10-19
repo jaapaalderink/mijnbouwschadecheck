@@ -21,6 +21,8 @@ RUN --mount=type=secret,id=npm_ca \
 COPY --chown=node:node --from=build /app/dist ./dist
 COPY --chown=node:node server ./server
 COPY --chown=node:node src/domain.ts ./src/domain.ts
+COPY --chown=node:node src/seo.ts ./src/seo.ts
+COPY --chown=node:node app.cjs ./app.cjs
 COPY --chown=node:node database ./database
 USER node
 EXPOSE 3001

@@ -2,50 +2,58 @@ import "dotenv/config";
 import { readFile, readdir } from "node:fs/promises";
 import { resolve } from "node:path";
 import { randomUUID } from "node:crypto";
-import { db } from "./database.ts";
+import { db, isMariaDB } from "./database.ts";
+import { migrateMariaDatabase } from "./migrate-mariadb.ts";
 import { hashPassword } from "./auth.ts";
+import { outboxTick } from "./notifications.ts";
+import { mailConfigured } from "./mail.ts";
 import { initial } from "../src/domain.ts";
 if (!db) throw Error("DATABASE_URL is required");
 const command = process.argv[2];
 try {
   if (command === "migrate") {
-    const client = await db.connect();
-    try {
-      await client.query("BEGIN");
-      await client.query("SELECT pg_advisory_xact_lock(752102)");
-      await client.query(
-        "create table if not exists schema_migrations(name text primary key,applied_at timestamptz default now())",
-      );
-      for (const name of (await readdir(resolve("database/migrations")))
-        .filter((x) => x.endsWith(".sql"))
-        .sort()) {
-        if (
-          !(
+    if (isMariaDB) {
+      await migrateMariaDatabase(process.env.DATABASE_URL!);
+    } else {
+      const client = await db.connect();
+      try {
+        await client.query("BEGIN");
+        await client.query("SELECT pg_advisory_xact_lock(752102)");
+        await client.query(
+          "create table if not exists schema_migrations(name text primary key,applied_at timestamptz default now())",
+        );
+        for (const name of (await readdir(resolve("database/migrations")))
+          .filter((x) => x.endsWith(".sql"))
+          .sort()) {
+          if (
+            !(
+              await client.query(
+                "select name from schema_migrations where name=$1",
+                [name],
+              )
+            ).rowCount
+          ) {
             await client.query(
-              "select name from schema_migrations where name=$1",
+              await readFile(resolve("database/migrations", name), "utf8"),
+            );
+            await client.query(
+              "insert into schema_migrations(name) values($1)",
               [name],
-            )
-          ).rowCount
-        ) {
-          await client.query(
-            await readFile(resolve("database/migrations", name), "utf8"),
-          );
-          await client.query("insert into schema_migrations(name) values($1)", [
-            name,
-          ]);
+            );
+          }
         }
+        await client.query(
+          "insert into questionnaire_versions(id,version,definition,state) select $1,1,$2,'published' where not exists(select 1 from questionnaire_versions)",
+          [initial.id, JSON.stringify(initial)],
+        );
+        await client.query("COMMIT");
+        console.log("Migrations and initial questionnaire applied.");
+      } catch (e) {
+        await client.query("ROLLBACK");
+        throw e;
+      } finally {
+        await client.release();
       }
-      await client.query(
-        "insert into questionnaire_versions(id,version,definition,state) select $1,1,$2,'published' where not exists(select 1 from questionnaire_versions)",
-        [initial.id, JSON.stringify(initial)],
-      );
-      await client.query("COMMIT");
-      console.log("Migrations and initial questionnaire applied.");
-    } catch (e) {
-      await client.query("ROLLBACK");
-      throw e;
-    } finally {
-      client.release();
     }
   } else if (command === "admin") {
     const email = process.env.ADMIN_EMAIL?.trim().toLowerCase(),
@@ -89,7 +97,18 @@ try {
       [days],
     );
     console.log("Deleted applications:", r.rowCount);
-  } else throw Error("Use migrate, admin or retention");
+  } else if (command === "notifications") {
+    if (
+      !mailConfigured() ||
+      !process.env.SITE_URL ||
+      !process.env.NOTIFICATION_EMAIL
+    )
+      throw Error(
+        "SMTP, SITE_URL and NOTIFICATION_EMAIL are required for notifications.",
+      );
+    await outboxTick();
+    console.log("Notification batch processed.");
+  } else throw Error("Use migrate, admin, retention or notifications");
 } finally {
   await db.end();
 }

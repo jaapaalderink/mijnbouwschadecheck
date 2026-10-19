@@ -1,6 +1,6 @@
 # Mijnbouwschadecheck
 
-Zelf te hosten Nederlandstalige React/TypeScript-website, Express-backend en PostgreSQL-database. **Geen Supabase-account of externe authdienst nodig.** De gratis check verzamelt aanvragen voor eigen persoonlijke opvolging. Er is geen marketing- of distributiesysteem.
+Zelf te hosten Nederlandstalige React/TypeScript-website, Express-backend en PostgreSQL- of MariaDB-database. **Geen Supabase-account of externe authdienst nodig.** De gratis check verzamelt aanvragen voor eigen persoonlijke opvolging. Er is geen marketing- of distributiesysteem.
 
 ## Starten op je eigen machine
 
@@ -41,6 +41,10 @@ Zonder databaseconfiguratie toont de site de eerste vragenlijst als demonstratie
 | `ADMIN_TOTP_SECRET`                                            | Optioneel base32 TOTP-secret bij het aanmaken van de beheerder                                                                |
 
 Voor lokale testmail: `SMTP_HOST=127.0.0.1`, `SMTP_PORT=1025`, `SMTP_REQUIRE_TLS=false`, fictieve `EMAIL_FROM` en `NOTIFICATION_EMAIL`. Mailpit vangt e-mails op en verstuurt ze niet naar echte ontvangers. De huidige cloudtest gebruikt deze configuratie. Een externe SMTP-dienst is nog niet aangesloten.
+
+## Hosting bij mijn.host
+
+Voor Node.js 24 met MariaDB in DirectAdmin: zie [de stapsgewijze installatiehandleiding](docs/mijnhost.md). Het startupbestand is `app.cjs`. Gebruik voor MariaDB een `mysql://`- of `mariadb://`-DATABASE_URL. Bestaande PostgreSQL-installaties blijven ondersteund; gegevens worden niet automatisch tussen databases overgezet.
 
 ## Zelf hosten
 

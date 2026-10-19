@@ -11,6 +11,7 @@
     "db:migrate": "tsx server/manage.ts migrate",
     "admin:create": "tsx server/manage.ts admin",
     "retention": "tsx server/manage.ts retention",
+    "outbox:run": "tsx server/manage.ts notifications",
     "test:e2e": "playwright test",
     "cloud:services": "tsx server/cloud-dev.ts"
   },
@@ -20,6 +21,7 @@
     "express": "^5.1.0",
     "express-rate-limit": "^8.1.0",
     "helmet": "^8.1.0",
+    "mysql2": "^3.24.6",
     "nodemailer": "^10.0.16",
     "pg": "^8.23.1",
     "react": "^19.1.1",
